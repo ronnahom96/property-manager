@@ -1,0 +1,262 @@
+openapi: 3.0.1
+info:
+  title: catalog-exercise
+  description: basic template for catalog exercise service
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+paths:
+  /products/filter:
+    post:
+      operationId: searchProducts
+      tags:
+        - products
+      summary: get product by parameters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productsFilters'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/products'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /products:
+    post:
+      operationId: createProduct
+      tags:
+        - products
+      summary: creates a new record of type product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/products'
+      responses:
+        201:
+          description: created
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /products/{id}:
+    put:
+      operationId: updateProduct
+      tags:
+        - products
+      summary: update the specific product by the supplier id
+      parameters: 
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/products'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/products'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    delete:
+      operationId: deleteProduct
+      tags:
+        - products
+      summary: delete product by id
+      parameters: 
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+components:
+  schemas:
+    products:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 48
+        description:
+          type: string
+        boundingPolygon:
+          $ref: '#/components/schemas/GeoJson'
+        consumptionLink:
+          type: string
+        type:
+          type: string
+          enum: [RASTER, RASTERIZED_VECTOR, 3D_TILES, QMESH]
+        consumptionProtocol:
+          type: string
+          enum: [WMS ,WMTS ,XYZ ,3D Tiles]
+        bestResolution:
+          type: number
+          format: float
+        minZoomLevel:
+          type: number
+          format: int32
+        maxZoomLevel:
+          format: int32
+          type: number
+    productsFilters:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/numericFilter'
+          - $ref: '#/components/schemas/compareFilter'
+          - $ref: '#/components/schemas/geoFilter'
+    numericFilter:
+      type: object
+      properties:
+        operator:
+          type: string
+          enum: [greater, greaterEqual, less, lessEqual]
+        field:
+          type: string          
+          enum: [bestResolution, minZoomLevel, maxZoomLevel]
+        value:
+          type: number
+    compareFilter:
+      type: object
+      properties:
+        operator:
+          type: string
+          enum: [equal]
+        field:
+          type: string          
+          enum: [id, name, description, consumptionLink, type, consumptionProtocol, bestResolution, 
+                  minZoomLevel, maxZoomLevel]
+        value:
+          oneOf: 
+            - type: string
+            - type: number
+    geoFilter:
+      type: object
+      properties:
+        operator:
+            type: string
+            enum: [contains, within, intersects]
+        field:
+          type: string          
+          enum: [boundingPolygon]
+        value:
+          $ref: '#/components/schemas/GeoJson'
+    GeoJson:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Feature
+          - FeatureCollection
+          - Point
+          - MultiPoint
+          - LineString
+          - MultiLineString
+          - Polygon
+          - MultiPolygon
+          - GeometryCollection
+        bbox:
+          type: array
+          items:
+            type: number
+      required:
+      - type
+      discriminator:  
+        propertyName: type
+    error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string

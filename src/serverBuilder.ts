@@ -1,0 +1,49 @@
+import express, { Router } from 'express';
+import bodyParser from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
+import { inject, injectable } from 'tsyringe';
+import YAML from 'yamljs';
+import { SERVICES } from './common/constants';
+import { IConfig } from './common/interfaces';
+import { PRODUCT_ROUTER_SYMBOL } from './products/routes/productRouter';
+import { handleError } from './common/errorHandler';
+
+@injectable()
+export class ServerBuilder {
+  private readonly serverInstance: express.Application;
+
+  public constructor(
+    @inject(SERVICES.CONFIG) private readonly config: IConfig,
+    @inject(PRODUCT_ROUTER_SYMBOL) private readonly productRouter: Router,
+  ) {
+    this.serverInstance = express();
+  }
+
+  public build(): express.Application {
+    this.registerPreRoutesMiddleware();
+    this.buildRoutes();
+    this.registerPostRoutesMiddleware();
+
+    return this.serverInstance;
+  }
+
+  private buildDocsRoutes(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const swaggerDocument = YAML.load('../swagger.yaml');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    this.serverInstance.use(this.config.get<string>('openapiConfig.basePath'), swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  }
+
+  private buildRoutes(): void {
+    this.serverInstance.use('/products', this.productRouter);
+    this.buildDocsRoutes();
+  }
+
+  private registerPreRoutesMiddleware(): void {
+    this.serverInstance.use(bodyParser.json(this.config.get<bodyParser.Options>('server.request.payload')));
+  }
+
+  private registerPostRoutesMiddleware(): void {
+    this.serverInstance.use(() => handleError);
+  }
+}
