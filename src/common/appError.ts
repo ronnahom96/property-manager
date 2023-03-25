@@ -1,14 +1,14 @@
 export class AppError extends Error {
-  public readonly httpCode: number;
+  public readonly statusCode: number;
   public readonly isOperational: boolean;
 
-  public constructor(description: string, httpCode: number, isOperational: boolean) {
+  public constructor(description: string, statusCode: number, isOperational: boolean) {
     super(description);
 
     // restore prototype chain
     Object.setPrototypeOf(this, new.target.prototype);
 
-    this.httpCode = httpCode;
+    this.statusCode = statusCode;
     this.isOperational = isOperational;
 
     Error.captureStackTrace(this);
