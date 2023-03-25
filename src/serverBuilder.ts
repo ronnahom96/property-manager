@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe';
 import YAML from 'yamljs';
 import { SERVICES } from './common/constants';
 import { IConfig } from './common/interfaces';
-import { PRODUCT_ROUTER_SYMBOL } from './products/routes/productRouter';
+import { RECORD_ROUTER_SYMBOL } from './records/routes/recordRouter';
 import { handleError } from './common/errorHandler';
 
 @injectable()
@@ -14,7 +14,7 @@ export class ServerBuilder {
 
   public constructor(
     @inject(SERVICES.CONFIG) private readonly config: IConfig,
-    @inject(PRODUCT_ROUTER_SYMBOL) private readonly productRouter: Router,
+    @inject(RECORD_ROUTER_SYMBOL) private readonly recordRouter: Router,
   ) {
     this.serverInstance = express();
   }
@@ -29,13 +29,13 @@ export class ServerBuilder {
 
   private buildDocsRoutes(): void {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const swaggerDocument = YAML.load('../swagger.yaml');
+    const swaggerDocument = YAML.load('./swagger.yaml');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.serverInstance.use(this.config.get<string>('openapiConfig.basePath'), swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   }
 
   private buildRoutes(): void {
-    this.serverInstance.use('/products', this.productRouter);
+    this.serverInstance.use('/records', this.recordRouter);
     this.buildDocsRoutes();
   }
 
