@@ -29,9 +29,7 @@ export class ServerBuilder {
   }
 
   private buildDocsRoutes(): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const swaggerDocument = YAML.load('./swagger.yaml');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.serverInstance.use(this.config.get<string>('openapiConfig.basePath'), swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   }
 
