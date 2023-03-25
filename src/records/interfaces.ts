@@ -6,12 +6,6 @@ export interface IRecord {
   date: Date;
 }
 
-export interface IRecordInputDTO {
-  name: string;
-  email: string;
-  password: string;
-}
-
 export interface RecordPathParams {
   propertyId: string;
 }
@@ -20,7 +14,7 @@ export interface RecordFilterParams {
   type?: RecordType;
   fromDate?: Date;
   toDate?: Date;
-  sort: Sort;
+  sort?: Sort;
   page?: number;
   limit?: number;
 }
