@@ -10,9 +10,8 @@ export const INVALID_FILTER_TYPE = 'Invalid filter type';
 /* eslint-disable @typescript-eslint/naming-convention */
 export const SERVICES: Record<string, symbol> = {
   CONFIG: Symbol('Config'),
-  APP_DATA_SOURCE: Symbol('APP_DATA_SOURCE'),
-  PRODUCT_FILTER_SERVICE: Symbol('PRODUCT_FILTER_SERVICE'),
-  GEO_SERVICE: Symbol('GEO_SERVICE'),
-  ERROR_HANDLER: Symbol('ERROR_HANDLER'),
+  LOGGER: Symbol('Logger'),
+  ERROR_HANDLER: Symbol('ErrorHandle'),
+  RECORD_MODEL: Symbol('RecordModel'),
 };
 /* eslint-enable @typescript-eslint/naming-convention */
