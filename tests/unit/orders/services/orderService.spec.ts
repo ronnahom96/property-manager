@@ -59,9 +59,9 @@ describe('RecordService', () => {
       const month = 3;
       const startingBalance = 100;
       const records: IRecord[] = [
-        { propertyId, date: new Date('2022-03-01'), amount: 50, prevPropertyValue: 0 },
-        { propertyId, date: new Date('2022-03-15'), amount: -20, prevPropertyValue: 30 },
-        { propertyId, date: new Date('2022-03-31'), amount: -30, prevPropertyValue: 0 },
+        { propertyId, date: new Date('2022-03-01'), amount: 50, balance: 0 },
+        { propertyId, date: new Date('2022-03-15'), amount: -20, balance: 30 },
+        { propertyId, date: new Date('2022-03-31'), amount: -30, balance: 0 },
       ];
       const expectedReport = [
         '2022-03-01: 100',
