@@ -2,7 +2,7 @@ import { RecordType, Sort } from "./types";
 
 export interface IRecord {
   propertyId: string;
-  prevPropertyValue: number;
+  balance: number;
   amount: number;
   date: Date;
 }
@@ -10,7 +10,7 @@ export interface IRecord {
 export interface IRecordDTO {
   propertyId: string;
   amount: number;
-  date: Date;
+  date: string;
 }
 
 export interface RecordPathParams {
@@ -19,8 +19,8 @@ export interface RecordPathParams {
 
 export interface RecordFilterParams {
   type?: RecordType;
-  fromDate?: Date;
-  toDate?: Date;
+  fromDate?: string;
+  toDate?: string;
   sort?: Sort;
   page?: number;
   limit?: number;

@@ -19,29 +19,18 @@ export class RecordService {
 
     async createRecord(recordInput: IRecordDTO): Promise<IRecord> {
         const lastRecord = await this.fetchLastRecordByProperty(recordInput.propertyId);
-        const prevPropertyValue = this.calcPrevPropertyValue(lastRecord, new Date(recordInput.date));
-        const record = new this.recordModel({ prevPropertyValue, ...recordInput });
+        const balance = this.calcBalance(lastRecord, new Date(recordInput.date), recordInput.amount);
+        const record = new this.recordModel({ balance, ...recordInput });
         return await record.save();
     }
 
-    private calcPrevPropertyValue(lastRecord: IRecord | null, date: Date) {
-        let prevPropertyValue = 0;
-
-        if (lastRecord && lastRecord.date.getTime() < date.getTime()) {
-            prevPropertyValue = lastRecord ? lastRecord.prevPropertyValue + lastRecord.amount : 0;
-        }
-
-        return prevPropertyValue;
-    }
-
     async getPropertyBalance(propertyId: string): Promise<number> {
-        const records = await this.recordModel.find({ propertyId }).exec();
-        if (records.length === 0) {
+        const lastRecord = await this.fetchLastRecordByProperty(propertyId);
+        if (!lastRecord) {
             throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
         }
 
-        const balance = records.map(record => record.amount).reduce((acc, currVal) => acc + currVal);
-        return balance;
+        return lastRecord.balance;
     }
 
     async getMonthlyReport(propertyId: string, year: number, month: number): Promise<string[]> {
@@ -59,9 +48,19 @@ export class RecordService {
             throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
         }
 
-        const startingBalance = records[0].prevPropertyValue;
+        const startingBalance = records[0].balance - records[0].amount;
         const report = this.buildReport(records, startingBalance);
         return report;
+    }
+
+    private calcBalance(lastRecord: IRecord | null, date: Date, amount: number) {
+        let balance = amount;
+
+        if (lastRecord && lastRecord.date.getTime() < date.getTime()) {
+            balance += lastRecord ? lastRecord.balance : 0;
+        }
+
+        return balance;
     }
 
     private async fetchLastRecordByProperty(propertyId: string): Promise<IRecord | null> {
