@@ -6,6 +6,10 @@ export const DEFAULT_SERVER_PORT = 80;
 // Errors
 export const NOT_FOUND = 'No records found';
 
+// Record types
+export const INCOME = 'income';
+export const EXPENSE = 'expense';
+
 /* eslint-disable @typescript-eslint/naming-convention */
 export const SERVICES: Record<string, symbol> = {
   CONFIG: Symbol('Config'),
