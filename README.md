@@ -15,13 +15,15 @@ MongoDB - Can handle high volumes of traffic by scaling horizontally across mult
 Pino - Pino is extremely fast and has a low overhead, good for our high traffic volume.
 
 Mongoose - Easy to use, i knew that it can be suitable for the requirements.
+Tsyringe - For Dependency Injection
 
 ## TODO
 1. Make the search more generic.
-I would add basic class of filter (BaseFilter), and create for each filter a new class (ToDateFilter) which implements
-    base filter method and override it by the relevant logic.
-    Then in the 
-2. Integration testing
+    I would add basic class of filter (BaseFilter), and create for each filter a new class (ToDateFilter) which implements
+        base filter method and override it by the relevant logic.
+        Then in the "buildQueryFromFilters" function i would pass over all the filters and append the logic to the query.
+2. Integration testing.
+3. Validation: DateTo Filter can't come before fromDate filter.
 
 
 ## API
