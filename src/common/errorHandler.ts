@@ -6,9 +6,7 @@ import { SERVICES } from './constants';
 
 @injectable()
 export class ErrorHandler {
-  constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger) {
-    console.log(logger);
-   }
+  constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger) { }
 
   public handleError(error: AppError, request: Request, response: Response, next: NextFunction) {
     this.logger.error(`Error has occurred ${error.message}, stack: ${error.stack as string}`);
