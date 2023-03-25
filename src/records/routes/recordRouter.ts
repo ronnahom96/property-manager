@@ -7,7 +7,7 @@ const recordRouterFactory: FactoryFunction<Router> = (dependencyContainer: Depen
   const controller = dependencyContainer.resolve(RecordController);
 
   router.post('/', controller.createRecord);
-  router.get('/filter', controller.searchRecords);
+  router.get('/filter/:propertyId', controller.searchRecords);
   router.get('/balance/:propertyId', controller.getPropertyBalance);
   router.get('/report/:propertyId', controller.getMonthlyReport);
 

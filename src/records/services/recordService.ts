@@ -1,16 +1,20 @@
 import httpStatus from 'http-status-codes';
-import { Model } from "mongoose";
+import { FilterQuery, Model } from "mongoose";
 import { inject, injectable } from "tsyringe";
 import { AppError } from "../../common/appError";
-import { NOT_FOUND, SERVICES } from "../../common/constants";
-import { IRecord, IRecordInputDTO } from "../interfaces";
+import { EXPENSE, INCOME, NOT_FOUND, SERVICES } from "../../common/constants";
+import { IRecord, IRecordInputDTO, RecordFilterParams } from "../interfaces";
 
 @injectable()
 export class RecordService {
     constructor(@inject(SERVICES.RECORD_MODEL) private recordModel: Model<IRecord>) { }
 
-    async searchRecords(params: any): Promise<IRecord[]> {
-        return [];
+    async searchRecords(propertyId: string, filters: RecordFilterParams): Promise<IRecord[]> {
+        const query: FilterQuery<RecordFilterParams> = this.recordModel.find({ propertyId });
+        const filteredQuery = this.buildQueryFromFilters(filters, query);
+
+        const records = await filteredQuery.exec();
+        return records;
     }
 
     async createRecord(recordInput: IRecordInputDTO): Promise<IRecord> {
@@ -29,8 +33,8 @@ export class RecordService {
     }
 
     async getMonthlyReport(propertyId: string, month: number, startingBalance: number): Promise<string[]> {
-        const query = { propertyId, "$expr": { "$eq": [{ "$month": "$date" }, month] } };
-        const records = await this.recordModel.find(query).sort({ date: 1 }).exec();
+        const filterQuery = { propertyId, "$expr": { "$eq": [{ "$month": "$date" }, month] } };
+        const records = await this.recordModel.find(filterQuery).sort({ date: 1 }).exec();
 
         const report = this.buildReport(records, startingBalance);
         return report;
@@ -49,5 +53,36 @@ export class RecordService {
 
         report.push(`Ending cash = ${currentCash}`)
         return report;
+    }
+
+    private buildQueryFromFilters(filters: RecordFilterParams, query: FilterQuery<RecordFilterParams>) {
+        const { type, fromDate, toDate, sort, page, limit } = filters;
+
+        if (type) {
+            if (type === INCOME) {
+                query.where('amount').gt(0);
+            } else if (type === EXPENSE) {
+                query.where('amount').lt(0);
+            }
+        }
+
+        if (fromDate) {
+            query.where({ date: { $gte: fromDate } });
+        }
+
+        if (toDate) {
+            query.where({ date: { $lte: toDate } });
+        }
+
+        if (sort) {
+            const sortValue = sort === "asc" ? 1 : -1;
+            query.sort({ date: sortValue });
+        }
+
+        if (page && limit) {
+            query.skip((page - 1) * limit).limit(limit);
+        }
+
+        return query;
     }
 }
