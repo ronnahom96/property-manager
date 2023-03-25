@@ -1,4 +1,4 @@
-interface IRecord {
+export interface IRecord {
   propertyId: string;
   amount: number;
   date: Date;
@@ -10,10 +10,18 @@ export interface IRecordInputDTO {
   password: string;
 }
 
-interface RecordFilterParams {
+export interface RecordPathParams {
+  propertyId: string;
+}
+
+export interface RecordFilterParams {
   propertyId: string;
   fromDate: Date;
   toDate: Date;
 }
 
-export { IRecord, RecordFilterParams };
+export interface IMonthlyReportResponse {
+  propertyId: string;
+  month: number;
+  report: string[];
+}

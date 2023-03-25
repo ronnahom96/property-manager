@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { inject, injectable } from 'tsyringe';
-import { IRecord, IRecordInputDTO, RecordFilterParams } from '../interfaces';
+import { IMonthlyReportResponse, IRecord, IRecordInputDTO, RecordFilterParams, RecordPathParams } from '../interfaces';
 import { RecordService } from '../services/recordService';
 
 type CreateResourceHandler = RequestHandler<undefined, IRecord, IRecordInputDTO>;
 type GetResourceHandler = RequestHandler<undefined, IRecord[], RecordFilterParams>;
-type GetMonthlyReportHandler = RequestHandler<undefined, string, { propertyId: string, month: number }>;
-type GetPropertyBalanceHandler = RequestHandler<{ propertyId: string }, number, undefined>;
+type GetPropertyBalanceHandler = RequestHandler<RecordPathParams, number, undefined>;
+type GetMonthlyReportHandler = RequestHandler<RecordPathParams, IMonthlyReportResponse, undefined, { month: number }>;
 
 @injectable()
 export class RecordController {
@@ -15,6 +15,7 @@ export class RecordController {
 
   public searchRecords: GetResourceHandler = (req, res, next) => {
     try {
+      console.log(this.searchRecords);
       // const filters: RecordFilterParams = req.query;
       // const productList: Record[] = await this.manager.searchRecords(filters);
       // return res.status(httpStatus.OK).json(filters);
@@ -43,11 +44,13 @@ export class RecordController {
     }
   };
 
-  public getMonthlyReport: GetMonthlyReportHandler = (req, res, next) => {
+  public getMonthlyReport: GetMonthlyReportHandler = async (req, res, next) => {
+    const propertyId: string = req.params.propertyId;
+    const month: number = req.query.month;
+
     try {
-      const propertyId: any = req.query.propertyId;
-      const month: any = req.query.month;
-      return res.status(httpStatus.NO_CONTENT);
+      const report: string[] = await this.recordService.getMonthlyReport(propertyId, month);
+      return res.status(httpStatus.NO_CONTENT).json({ propertyId, month, report });
     } catch (error) {
       return next(error);
     }
