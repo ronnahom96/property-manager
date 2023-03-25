@@ -8,6 +8,7 @@ import { InjectionObject, registerDependencies } from './common/dependencyRegist
 import { logger } from './common/logger';
 import { recordRouterFactory, RECORD_ROUTER_SYMBOL } from './records/routes/recordRouter';
 import RecordModel from './records/models/Record';
+import { ErrorHandler } from './common/errorHandler';
 
 const dbConnectionUrl = process.env.DB_CONNECTION_URL;
 
@@ -26,6 +27,7 @@ export const registerExternalValues = async (options?: RegisterOptions): Promise
   const dependencies: InjectionObject<unknown>[] = [
     { token: SERVICES.CONFIG, provider: { useValue: config } },
     { token: SERVICES.LOGGER, provider: { useValue: logger } },
+    { token: SERVICES.ERROR_HANDLER, provider: { useClass: ErrorHandler } },
     { token: RECORD_ROUTER_SYMBOL, provider: { useFactory: recordRouterFactory } },
     { token: SERVICES.RECORD_MODEL, provider: { useValue: RecordModel } },
   ];
