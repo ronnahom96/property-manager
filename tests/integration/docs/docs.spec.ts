@@ -2,7 +2,7 @@ import httpStatusCodes from 'http-status-codes';
 import { getApp } from '../../../src/app';
 import { DocsRequestSender } from './helpers/docsRequestSender';
 
-describe('products', function () {
+describe('records', function () {
   let requestSender: DocsRequestSender;
   beforeEach(async function () {
     const app = await getApp({ useChild: true });
