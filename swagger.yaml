@@ -112,7 +112,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /balance/${propertyId}:
+  /records/balance/{propertyId}:
     get:
       operationId: getPropertyBalance
       tags:
@@ -154,7 +154,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /report:
+  /records/report:
     get:
       operationId: getMonthlyReport
       tags:
