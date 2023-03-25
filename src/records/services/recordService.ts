@@ -14,7 +14,7 @@ export class RecordService {
 
     async getPropertyBalance(propertyId: string): Promise<number> {
         const records = await this.recordModel.find({ propertyId }).exec();
-        // ?records.map(record => record.amount);
-        return 1;
+        const balance = records.map(record => record.amount).reduce((acc, currVal) => acc + currVal);
+        return balance;
     }
 }
