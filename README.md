@@ -1,74 +1,30 @@
-# Map Colonies typescript service template
+# Property manager microservice
 
 ----------------------------------
 
-![badge-alerts-lgtm](https://img.shields.io/lgtm/alerts/github/MapColonies/ts-server-boilerplate?style=for-the-badge)
+This is microservice which responsible in property management in NodeJs + Typescript.
 
-![grade-badge-lgtm](https://img.shields.io/lgtm/grade/javascript/github/MapColonies/ts-server-boilerplate?style=for-the-badge)
+## Technology consideration
+Nodejs - Good for scalable and high-performance applications.
+Typescript - Catching errors earlier, Improved code maintainability, Improved scalability.
+MongoDB - Can handle high volumes of traffic by scaling horizontally across multiple servers, design to high performance.
+          We also don't have complex relations between entities because we have only one entity (Record).
+Pino - Pino is extremely fast and has a low overhead, good for our high traffic volume.
+Mongoose - Easy to use, i knew that it can be suitable for the requirements.
 
-![snyk](https://img.shields.io/snyk/vulnerabilities/github/MapColonies/ts-server-boilerplate?style=for-the-badge)
 
-----------------------------------
-
-This is a basic repo template for building new MapColonies web services in Typescript.
-
-### Template Features:
-
-- eslint configuration by [@map-colonies/eslint-config](https://github.com/MapColonies/eslint-config)
-
-- prettier configuration by [@map-colonies/prettier-config](https://github.com/MapColonies/prettier-config)
-
-- jest
-
-- .nvmrc
-
-- Multi stage producton-ready Dockerfile
-
-- commitlint
-
-- git hooks
-
-- logging by [@map-colonies/js-logger](https://github.com/MapColonies/js-logger)
-
-- OpenAPI request validation
-
-- config load with [node-config](https://www.npmjs.com/package/node-config)
-
-- Tracing and metrics by [@map-colonies/telemetry](https://github.com/MapColonies/telemetry)
-
-- github templates
-
-- bug report
-
-- feature request
-
-- pull request
-
-- github actions
-
-- on pull_request
-
-- LGTM
-
-- test
-
-- lint
-
-- snyk
+## TODO
+1. 
 
 ## API
-Checkout the OpenAPI spec [here](/openapi3.yaml)
+Checkout the OpenAPI spec [here](/swagger.yaml)
 
 ## Installation
 
-Install deps with npm
+Install deps with yarn
 
 ```bash
-npm install
-```
-### Install Git Hooks
-```bash
-npx husky install
+yarn install
 ```
 
 ## Run Locally
@@ -77,7 +33,7 @@ Clone the project
 
 ```bash
 
-git clone https://link-to-project
+git clone https://github.com/ronnahom96/property-manager
 
 ```
 
@@ -85,7 +41,7 @@ Go to the project directory
 
 ```bash
 
-cd my-project
+cd property-manager
 
 ```
 
@@ -93,7 +49,7 @@ Install dependencies
 
 ```bash
 
-npm install
+yarn install
 
 ```
 
@@ -101,7 +57,7 @@ Start the server
 
 ```bash
 
-npm run start
+yarn start
 
 ```
 
@@ -111,16 +67,16 @@ To run tests, run the following command
 
 ```bash
 
-npm run test
+yarn run test
 
 ```
 
 To only run unit tests:
 ```bash
-npm run test:unit
+yarn run test:unit
 ```
 
 To only run integration tests:
 ```bash
-npm run test:integration
+yarn run test:integration
 ```
