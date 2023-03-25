@@ -7,16 +7,12 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Server",
-      "preLaunchTask": "npm: build",
-      "sourceMaps": true,
-      "smartStep": true,
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart",
-      "cwd": "${workspaceFolder}/dist",
-      "skipFiles": ["${workspaceFolder}/node_modules/**/*.js", "<node_internals>/**/*.js"],
-      "outFiles": ["${workspaceFolder}/dist/**/*.js", "!**/node_modules/**"],
-      "program": "${workspaceFolder}/src/index.ts"
+      "name": "Launch Program",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "program": "${workspaceFolder}\\src\\index.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }
