@@ -154,7 +154,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /records/report:
+  /records/report/{propertyId}:
     get:
       operationId: getMonthlyReport
       tags:
@@ -162,7 +162,7 @@ paths:
       summary: get monthly report
       parameters:
         - name: propertyId
-          in: query
+          in: path
           required: true
           schema:
             type: string
