@@ -1,24 +1,24 @@
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { inject, injectable } from 'tsyringe';
-import { IMonthlyReportResponse, IRecord, IRecordInputDTO, RecordFilterParams, RecordPathParams } from '../interfaces';
+import { IRecord, IRecordInputDTO, MonthlyReportQueryParams, MonthlyReportResponse, PropertyBalanceResponse, RecordFilterParams, RecordPathParams } from '../interfaces';
 import { RecordService } from '../services/recordService';
 
 type CreateResourceHandler = RequestHandler<undefined, IRecord, IRecordInputDTO>;
-type GetResourceHandler = RequestHandler<undefined, IRecord[], RecordFilterParams>;
-type GetPropertyBalanceHandler = RequestHandler<RecordPathParams, number, undefined>;
-type GetMonthlyReportHandler = RequestHandler<RecordPathParams, IMonthlyReportResponse, undefined, { month: number }>;
+type SearchRecordsHandler = RequestHandler<undefined, IRecord[], RecordFilterParams>;
+type GetPropertyBalanceHandler = RequestHandler<RecordPathParams, PropertyBalanceResponse, undefined>;
+type GetMonthlyReportHandler = RequestHandler<RecordPathParams, MonthlyReportResponse, undefined, MonthlyReportQueryParams>;
 
 @injectable()
 export class RecordController {
   public constructor(@inject(RecordService) private readonly recordService: RecordService) { }
 
-  public searchRecords: GetResourceHandler = (req, res, next) => {
+  public searchRecords: SearchRecordsHandler = (req, res, next) => {
     try {
-      console.log(this.searchRecords);
       // const filters: RecordFilterParams = req.query;
       // const productList: Record[] = await this.manager.searchRecords(filters);
-      // return res.status(httpStatus.OK).json(filters);
+      // const records: IRecord = [];
+      return res.status(httpStatus.OK).json([]);
     } catch (error) {
       return next(error)
     }
@@ -38,7 +38,7 @@ export class RecordController {
     try {
       const propertyId = req.params.propertyId;
       const balance = await this.recordService.getPropertyBalance(propertyId);
-      return res.status(httpStatus.NO_CONTENT).send(balance);;
+      return res.status(httpStatus.OK).json({ propertyId, balance });;
     } catch (error) {
       return next(error);
     }
@@ -46,11 +46,11 @@ export class RecordController {
 
   public getMonthlyReport: GetMonthlyReportHandler = async (req, res, next) => {
     const propertyId: string = req.params.propertyId;
-    const month: number = req.query.month;
+    const { month, startingBalance } = req.query;
 
     try {
-      const report: string[] = await this.recordService.getMonthlyReport(propertyId, month);
-      return res.status(httpStatus.NO_CONTENT).json({ propertyId, month, report });
+      const report: string[] = await this.recordService.getMonthlyReport(propertyId, month, Number(startingBalance));
+      return res.status(httpStatus.OK).json({ propertyId, month, report });
     } catch (error) {
       return next(error);
     }
