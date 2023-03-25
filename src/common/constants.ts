@@ -5,6 +5,7 @@ export const DEFAULT_SERVER_PORT = 80;
 
 // Errors
 export const NOT_FOUND = 'No records found';
+export const INVALID_DATE = 'Invalid date';
 
 // Record types
 export const INCOME = 'income';
