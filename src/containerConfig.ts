@@ -1,10 +1,15 @@
 import config from 'config';
+import httpStatus from 'http-status-codes';
 import { DependencyContainer } from 'tsyringe/dist/typings/types';
+import { AppError } from './common/appError';
 import { SERVICES } from './common/constants';
-import { initializeConnection } from './common/db';
+import mongooseLoader from './common/db';
 import { InjectionObject, registerDependencies } from './common/dependencyRegistration';
-import { productRouterFactory, PRODUCT_ROUTER_SYMBOL } from './products/routes/productRouter';
-import { ProductFilterService } from './products/services/productFilterService';
+import { logger } from './common/logger';
+import { recordRouterFactory, RECORD_ROUTER_SYMBOL } from './records/routes/recordRouter';
+import RecordModel from './records/models/Record';
+
+const dbConnectionUrl = process.env.DB_CONNECTION_URL;
 
 export interface RegisterOptions {
   override?: InjectionObject<unknown>[];
@@ -12,13 +17,17 @@ export interface RegisterOptions {
 }
 
 export const registerExternalValues = async (options?: RegisterOptions): Promise<DependencyContainer> => {
-  const appDataSource = await initializeConnection();
+  if (!dbConnectionUrl) {
+    throw new AppError("No db connection url found", httpStatus.INTERNAL_SERVER_ERROR, false);
+  }
+
+  await mongooseLoader(dbConnectionUrl);
 
   const dependencies: InjectionObject<unknown>[] = [
     { token: SERVICES.CONFIG, provider: { useValue: config } },
-    { token: SERVICES.APP_DATA_SOURCE, provider: { useValue: appDataSource } },
-    { token: SERVICES.PRODUCT_FILTER_SERVICE, provider: { useClass: ProductFilterService } },
-    { token: PRODUCT_ROUTER_SYMBOL, provider: { useFactory: productRouterFactory } },
+    { token: SERVICES.LOGGER, provider: { useValue: logger } },
+    { token: RECORD_ROUTER_SYMBOL, provider: { useFactory: recordRouterFactory } },
+    { token: SERVICES.RECORD_MODEL, provider: { useValue: RecordModel } },
   ];
 
   return registerDependencies(dependencies, options?.override, options?.useChild);
