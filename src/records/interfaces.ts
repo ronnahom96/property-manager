@@ -1,3 +1,5 @@
+import { RecordType, Sort } from "./types";
+
 export interface IRecord {
   propertyId: string;
   amount: number;
@@ -15,9 +17,12 @@ export interface RecordPathParams {
 }
 
 export interface RecordFilterParams {
-  propertyId: string;
-  fromDate: Date;
-  toDate: Date;
+  type?: RecordType;
+  fromDate?: Date;
+  toDate?: Date;
+  sort: Sort;
+  page?: number;
+  limit?: number;
 }
 
 export interface MonthlyReportResponse {
@@ -34,4 +39,9 @@ export interface PropertyBalanceResponse {
 export interface MonthlyReportQueryParams {
   month: number;
   startingBalance: number;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
 }
