@@ -10,7 +10,7 @@ Nodejs - Good for scalable and high-performance applications.
 Typescript - Catching errors earlier, Improved code maintainability, Improved scalability.
 
 MongoDB - Can handle high volumes of traffic by scaling horizontally across multiple servers, design to high performance.
-          We also don't have complex relations between entities because we have only one entity (Record).
+          We also don't have complex relations between entities, because we have only one entity (Record).
 
 Pino - Pino is extremely fast and has a low overhead, good for our high traffic volume.
 
@@ -23,7 +23,7 @@ Tsyringe - For Dependency Injection
         base filter method and override it by the relevant logic.
         Then in the "buildQueryFromFilters" function i would pass over all the filters and append the logic to the query.
 2. Integration testing.
-3. Validation: DateTo Filter can't come before fromDate filter.
+3. Validations: DateTo Filter can't come before fromDate filter.
 
 
 ## API
