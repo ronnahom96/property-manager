@@ -10,7 +10,7 @@ export class ErrorHandler {
 
   public handleError(error: AppError, request: Request, response: Response, next: NextFunction) {
     this.logger.error(`Error has occurred ${error.message}, stack: ${error.stack as string}`);
-    response.status(error.httpCode);
+    response.status(error.statusCode);
 
     if (!error.isOperational) {
       throw error;
