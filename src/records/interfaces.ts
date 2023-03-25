@@ -2,6 +2,13 @@ import { RecordType, Sort } from "./types";
 
 export interface IRecord {
   propertyId: string;
+  prevPropertyValue: number;
+  amount: number;
+  date: Date;
+}
+
+export interface IRecordDTO {
+  propertyId: string;
   amount: number;
   date: Date;
 }
@@ -31,8 +38,8 @@ export interface PropertyBalanceResponse {
 }
 
 export interface MonthlyReportQueryParams {
+  year: number;
   month: number;
-  startingBalance: number;
 }
 
 export interface Pagination {

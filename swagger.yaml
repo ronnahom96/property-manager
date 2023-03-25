@@ -160,6 +160,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1900
         - name: month
           in: query
           required: true
@@ -167,11 +173,6 @@ paths:
             type: integer
             minimum: 1
             maximum: 12
-        - name: startingBalance
-          in: query
-          required: true
-          schema:
-            type: number
       responses:
         200:
           description: OK

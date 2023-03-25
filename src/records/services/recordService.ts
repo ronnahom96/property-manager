@@ -3,7 +3,7 @@ import { FilterQuery, Model } from "mongoose";
 import { inject, injectable } from "tsyringe";
 import { AppError } from "../../common/appError";
 import { EXPENSE, INCOME, NOT_FOUND, SERVICES } from "../../common/constants";
-import { IRecord, IRecordInputDTO, RecordFilterParams } from "../interfaces";
+import { IRecord, IRecordDTO, RecordFilterParams } from "../interfaces";
 
 @injectable()
 export class RecordService {
@@ -17,9 +17,21 @@ export class RecordService {
         return records;
     }
 
-    async createRecord(recordInput: IRecordInputDTO): Promise<IRecord> {
-        const Record = new this.recordModel({ ...recordInput });
-        return await Record.save();
+    async createRecord(recordInput: IRecordDTO): Promise<IRecord> {
+        const lastRecord = await this.fetchLastRecordByProperty(recordInput.propertyId);
+        const prevPropertyValue = this.calcPrevPropertyValue(lastRecord, new Date(recordInput.date));
+        const record = new this.recordModel({ prevPropertyValue, ...recordInput });
+        return await record.save();
+    }
+
+    private calcPrevPropertyValue(lastRecord: IRecord | null, date: Date) {
+        let prevPropertyValue = 0;
+
+        if (lastRecord && lastRecord.date.getTime() < date.getTime()) {
+            prevPropertyValue = lastRecord ? lastRecord.prevPropertyValue + lastRecord.amount : 0;
+        }
+
+        return prevPropertyValue;
     }
 
     async getPropertyBalance(propertyId: string): Promise<number> {
@@ -32,12 +44,29 @@ export class RecordService {
         return balance;
     }
 
-    async getMonthlyReport(propertyId: string, month: number, startingBalance: number): Promise<string[]> {
-        const filterQuery = { propertyId, "$expr": { "$eq": [{ "$month": "$date" }, month] } };
+    async getMonthlyReport(propertyId: string, year: number, month: number): Promise<string[]> {
+        const filterQuery = {
+            propertyId,
+            "$expr": {
+                "$and": [
+                    { "$eq": [{ "$month": "$date" }, month] },
+                    { "$eq": [{ "$year": "$date" }, year] }
+                ]
+            }
+        };
         const records = await this.recordModel.find(filterQuery).sort({ date: 1 }).exec();
+        if (records.length === 0) {
+            throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
+        }
 
+        const startingBalance = records[0].prevPropertyValue;
         const report = this.buildReport(records, startingBalance);
         return report;
+    }
+
+    private async fetchLastRecordByProperty(propertyId: string): Promise<IRecord | null> {
+        const record: IRecord | null = await this.recordModel.findOne({ propertyId }).sort({ date: -1 }).exec();
+        return record;
     }
 
     private buildReport(records: IRecord[], startingBalance: number) {
@@ -55,6 +84,7 @@ export class RecordService {
         return report;
     }
 
+    // TODO: improve it to be generic, explanation in the README
     private buildQueryFromFilters(filters: RecordFilterParams, query: FilterQuery<RecordFilterParams>) {
         const { type, fromDate, toDate, sort, page, limit } = filters;
 

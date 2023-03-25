@@ -3,6 +3,7 @@ import { IRecord } from '../interfaces';
 
 const recordSchema = new Schema<IRecord>({
     propertyId: { type: String, required: true },
+    prevPropertyValue: { type: Number, default: 0 },
     amount: { type: Number, required: true },
     date: { type: Date, required: true },
 });
