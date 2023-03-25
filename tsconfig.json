@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
     "target": "es2021",
+    "sourceMap": true,
     "module": "commonjs",
     "declaration": true,
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": false,  
+    "noUnusedParameters": false,
+    "skipLibCheck": true
   },
   "include": ["src", "tests"],
   "exclude": ["node_modules", "dist", "tests"]
