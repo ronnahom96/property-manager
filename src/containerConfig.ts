@@ -3,7 +3,7 @@ import httpStatus from 'http-status-codes';
 import { DependencyContainer } from 'tsyringe/dist/typings/types';
 import { AppError } from './common/appError';
 import { SERVICES } from './common/constants';
-import mongooseLoader from './common/db';
+import mongooseLoader from './common/dbLoader';
 import { InjectionObject, registerDependencies } from './common/dependencyRegistration';
 import { logger } from './common/logger';
 import { recordRouterFactory, RECORD_ROUTER_SYMBOL } from './records/routes/recordRouter';
