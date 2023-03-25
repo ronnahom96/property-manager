@@ -15,7 +15,7 @@ paths:
       summary: get record by parameters
       parameters:
         - name: propertyId
-          in: path
+          in: query
           required: true
           schema:
             type: string
@@ -112,9 +112,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /balance:
+  /balance/${propertyId}:
     get:
-      operationId: getBalance
+      operationId: getPropertyBalance
       tags:
         - records
       summary: get balance of property
@@ -208,15 +208,15 @@ components:
     records:
       type: object
       required:
-        - name
+        - propertyId
         - amount
         - date
       properties:
-        name:
+        propertyId:
           type: string
-          minLength: 1
         amount:
           type: number
+          minLength: 1
         date:
           type: string
           format: date
