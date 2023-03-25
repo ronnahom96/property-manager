@@ -1,11 +1,22 @@
-import { Response } from "express";
+import { NextFunction, Request, Response } from 'express';
+import { Logger } from 'pino';
+import { inject, injectable } from 'tsyringe';
 import { AppError } from './appError';
+import { SERVICES } from './constants';
 
-export function handleError(error: AppError, response: Response): void {
-  console.log(`Error has occurred ${error.message}, stack: ${error.stack as string}`);
-  response.status(error.httpCode);
+@injectable()
+export class ErrorHandler {
+  constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger) {
+    console.log(logger);
+   }
 
-  if (!error.isOperational) {
-    throw error;
+  public handleError(error: AppError, request: Request, response: Response, next: NextFunction) {
+    this.logger.error(`Error has occurred ${error.message}, stack: ${error.stack as string}`);
+    response.status(error.httpCode);
+
+    if (!error.isOperational) {
+      throw error;
+    }
+    next();
   }
 }

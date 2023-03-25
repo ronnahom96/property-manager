@@ -6,7 +6,7 @@ import YAML from 'yamljs';
 import { SERVICES } from './common/constants';
 import { IConfig } from './common/interfaces';
 import { RECORD_ROUTER_SYMBOL } from './records/routes/recordRouter';
-import { handleError } from './common/errorHandler';
+import { ErrorHandler } from './common/errorHandler';
 
 @injectable()
 export class ServerBuilder {
@@ -14,6 +14,7 @@ export class ServerBuilder {
 
   public constructor(
     @inject(SERVICES.CONFIG) private readonly config: IConfig,
+    @inject(SERVICES.ERROR_HANDLER) private readonly errorHandler: ErrorHandler,
     @inject(RECORD_ROUTER_SYMBOL) private readonly recordRouter: Router,
   ) {
     this.serverInstance = express();
@@ -44,6 +45,6 @@ export class ServerBuilder {
   }
 
   private registerPostRoutesMiddleware(): void {
-    this.serverInstance.use(() => handleError);
+    this.serverInstance.use(this.errorHandler.handleError.bind(this.errorHandler));
   }
 }
