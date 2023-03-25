@@ -20,8 +20,18 @@ export interface RecordFilterParams {
   toDate: Date;
 }
 
-export interface IMonthlyReportResponse {
+export interface MonthlyReportResponse {
   propertyId: string;
   month: number;
   report: string[];
+}
+
+export interface PropertyBalanceResponse {
+  propertyId: string;
+  balance: number;
+}
+
+export interface MonthlyReportQueryParams {
+  month: number;
+  startingBalance: number;
 }
