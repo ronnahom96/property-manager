@@ -1,4 +1,4 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { IRecord } from '../interfaces';
 
 const recordSchema = new Schema<IRecord>({
@@ -6,6 +6,9 @@ const recordSchema = new Schema<IRecord>({
     amount: { type: Number, required: true },
     date: { type: Date, required: true },
 });
+
+// Create index for read performance
+recordSchema.index({ propertyId: 1 });
 
 export default model<IRecord>('Record', recordSchema);
 
