@@ -34,7 +34,7 @@ Checkout the OpenAPI spec [here](/swagger.yaml)
 Install deps with yarn
 
 ```bash
-yarn install
+yarn
 ```
 
 ## Run Locally
@@ -55,11 +55,27 @@ cd property-manager
 
 ```
 
+run docker-compose to run locally mongo db instance.
+
+```bash
+
+docker-compose up -d
+
+```
+
+create .env file in config directory with the local db connection url
+
+```bash
+
+DB_CONNECTION_URL="mongodb+srv://ronh:102030@cluster0.ufp673v.mongodb.net/?retryWrites=true&w=majority"
+
+```
+
 Install dependencies
 
 ```bash
 
-yarn install
+yarn
 
 ```
 
