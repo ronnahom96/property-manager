@@ -1,10 +1,22 @@
 {
-	"ignorePatterns": ["**/*.js", "dist", "helm"],
-	"extends": [
-		"@map-colonies/eslint-config/jest",
-		"@map-colonies/eslint-config/ts-base"
-	],
-	"parserOptions": {
-		"project": "./tsconfig.lint.json"
-	}
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "overrides": [],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": ["@typescript-eslint", "prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  }
 }

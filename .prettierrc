@@ -1,1 +1,5 @@
-"@map-colonies/prettier-config"
+{
+    "singleQuote": true,
+    "semi": true,
+    "tabWidth": 2
+  }

@@ -2,11 +2,9 @@ dist
 .github
 .gitignore
 CHANGELOG.md
-commitlint.config.js
 package-lock.json
 package.json
 README.md
-tsbuildconfig.json
 tsconfig.json
 node_modules
 *.html
