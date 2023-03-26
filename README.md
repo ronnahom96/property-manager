@@ -27,7 +27,17 @@ Cache Mechanism - For simplicity i used in memory cache solution to store the ba
 3. Validations: DateTo Filter can't come before fromDate filter.
 4. Using external tool like Redis to store property balance information.
 5. Using traces to track request path.
-
+6. There is a bug when enter number in the date field. (Need to validate it is good format: yyyy-mm-dd)
+    i can use moment library for that.
+7. Improve monthly report response, adding startingBalance and endingBalance to the response,
+8. Adding type attribute for each record.
+    Using a type attribute can make it easier to understand and query the data, as you can clearly see the income and expense transactions separated by type. 
+    It can also make it easier to add additional transaction types in the future if needed.
+    I chose to use positive and negative amount values because it simplify the data model and make it more straightforward to calculate balances.
+9. For enabling insert records with old dates:
+    9.1. Instead of fetching last record, fetch the record with the last date that older the new date.
+    9.2. Update the balance for each record that newer from this date. (we can keep the original document and update the       version).
+    This can be very slow and should consider as cron job.
 
 ## API
 Checkout the OpenAPI spec [here](/swagger.yaml)
