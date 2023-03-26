@@ -13,7 +13,7 @@ module.exports = {
   coverageDirectory: '<rootDir>/coverage',
   rootDir: '../../../.',
   testMatch: ['<rootDir>/tests/integration/**/*.spec.ts'],
-  setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts', '<rootDir>/tests/configurations/.env.test.ts'],
+  setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts', '<rootDir>/config/.env.test'],
   setupFilesAfterEnv: ['jest-openapi', '<rootDir>/tests/configurations/initJestOpenapi.setup.ts'],
   reporters: [
     'default',

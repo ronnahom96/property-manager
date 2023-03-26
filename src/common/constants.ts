@@ -4,7 +4,7 @@ export const SERVICE_NAME = readPackageJsonSync().name ?? 'unknown_service';
 export const DEFAULT_SERVER_PORT = 80;
 
 // Errors
-export const NOT_FOUND = 'No records found';
+export const NOT_FOUND = 'Record not found';
 export const INVALID_DATE = 'Invalid date';
 
 // Record types

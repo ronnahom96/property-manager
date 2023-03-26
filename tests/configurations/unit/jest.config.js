@@ -25,7 +25,7 @@ module.exports = {
     ['jest-html-reporters', { multipleReportsUnitePath: './reports', pageTitle: 'unit', publicPath: './reports', filename: 'unit.html' }],
   ],
   rootDir: '../../../.',
-  setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts', '<rootDir>/tests/configurations/.env.test.ts'],
+  setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts', '<rootDir>/config/.env.test'],
   preset: 'ts-jest',
   testEnvironment: 'node',
   coverageThreshold: {
