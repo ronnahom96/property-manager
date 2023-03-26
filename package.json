@@ -1,7 +1,7 @@
 {
   "name": "property-manager",
   "version": "1.0.0",
-  "description": "This is code exercise for my beginning at map colonies team",
+  "description": "This microservice is responsible for managing properties",
   "main": "./src/index.ts",
   "scripts": {
     "format": "prettier --check .",
@@ -14,13 +14,11 @@
     "prebuild": "npm run clean",
     "build": "tsc && npm run assets:copy",
     "start": "npm run build && node ./dist/index.js",
-    "dev": "npm run build && cd dist && nodemon ./index.js",
     "assets:copy": "copyfiles -f ./config/* ./dist/config && copyfiles -f ./swagger.yaml ./dist/ && copyfiles ./package.json dist && copyfiles -f ./config/.env ./dist/config",
     "clean": "rimraf dist",
     "test:unit": "DOTENV_CONFIG_PATH=./config/.env.test jest --config=./tests/configurations/unit/jest.config.js",
-    "test:unit:windows": "jest --config=./tests/configurations/unit/jest.config.js",
-    "test": "npm run test:unit:windows",
-    "integ": "jest --config=./tests/configurations/integration/jest.config.js"
+    "test:integration": "DOTENV_CONFIG_PATH=./config/.env.test jest --config=./tests/configurations/integration/jest.config.js",
+    "test": "npm run test:unit"
   },
   "directories": {
     "test": "tests"

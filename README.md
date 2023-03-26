@@ -2,7 +2,7 @@
 
 ----------------------------------
 
-This is microservice which responsible in property management in NodeJs + Typescript.
+This microservice is responsible for managing properties in NodeJs + Typescript.
 
 ## Technology consideration
 Nodejs - Good for scalable and high-performance applications.
@@ -25,7 +25,7 @@ Cache Mechanism - For simplicity i used in memory cache solution to store the ba
         Then in the "buildQueryFromFilters" function i would pass over all the filters and append the logic to the query.
 2. Integration testing.
 3. Validations: DateTo Filter can't come before fromDate filter.
-4. Using external tool like Redis to store property balance.
+4. Using external tool like Redis to store property balance information.
 5. Using traces to track request path.
 
 
@@ -93,14 +93,4 @@ To run tests, run the following command
 
 yarn run test
 
-```
-
-To only run unit tests:
-```bash
-yarn run test:unit
-```
-
-To only run integration tests:
-```bash
-yarn run test:integration
 ```
