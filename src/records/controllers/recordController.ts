@@ -24,7 +24,7 @@ export class RecordController {
     const propertyId = req.params.propertyId;
     const filters: RecordFilterParams = req.query;
 
-    this.logger.info("start searchRecords", { propertyId, filters });
+    this.logger.info({ message: "start searchRecords", propertyId, filters });
 
     try {
       if ((filters.toDate && !this.checkIsValidDate(filters.toDate)) ||
@@ -33,6 +33,7 @@ export class RecordController {
       }
 
       const records: IRecord[] = await this.recordService.searchRecords(propertyId, filters);
+      this.logger.info({ message: "finish searchRecords", propertyId, filters, recordsCount: records.length });
       return res.status(httpStatus.OK).json(records);
     } catch (error) {
       return next(error)
@@ -41,7 +42,7 @@ export class RecordController {
 
   public createRecord: CreateRecordHandler = async (req, res, next) => {
     const recordInput: IRecordDTO = req.body
-    this.logger.info("start createRecord", { recordInput });
+    this.logger.info({ message: "start createRecord", recordInput });
 
     try {
       if (!this.checkIsValidDate(recordInput.date)) {
@@ -49,6 +50,7 @@ export class RecordController {
       }
 
       const record = await this.recordService.createRecord(recordInput);
+      this.logger.info({ message: "finish createRecord", record });
       return res.status(httpStatus.CREATED).json(record);
     } catch (error) {
       return next(error);
@@ -57,10 +59,11 @@ export class RecordController {
 
   public getPropertyBalance: GetPropertyBalanceHandler = async (req, res, next) => {
     const propertyId = req.params.propertyId;
-    this.logger.info("start getPropertyBalance", { propertyId });
+    this.logger.info({ message: "start getPropertyBalance", propertyId });
 
     try {
       const balance = await this.recordService.getPropertyBalance(propertyId);
+      this.logger.info({ message: "finish getPropertyBalance", balance });
       return res.status(httpStatus.OK).json({ propertyId, balance });;
     } catch (error) {
       return next(error);
@@ -70,10 +73,11 @@ export class RecordController {
   public getMonthlyReport: GetMonthlyReportHandler = async (req, res, next) => {
     const propertyId: string = req.params.propertyId;
     const { year, month } = req.query;
-    this.logger.info("start getMonthlyReport", { propertyId, year, month });
+    this.logger.info({ message: "start getMonthlyReport", propertyId, year, month });
 
     try {
       const report: string[] = await this.recordService.getMonthlyReport(propertyId, year, month);
+      this.logger.info({ message: "finish getMonthlyReport", propertyId, year, month, report });
       return res.status(httpStatus.OK).json({ propertyId, month, report });
     } catch (error) {
       return next(error);
