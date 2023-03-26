@@ -24,6 +24,9 @@ Tsyringe - For Dependency Injection
         Then in the "buildQueryFromFilters" function i would pass over all the filters and append the logic to the query.
 2. Integration testing.
 3. Validations: DateTo Filter can't come before fromDate filter.
+4. Using cache mechanism to store properties balance
+    We can use external tool like Redis or in memory solution.
+5. Using traces to track request path.
 
 
 ## API
