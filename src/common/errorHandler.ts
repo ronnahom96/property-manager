@@ -15,6 +15,6 @@ export class ErrorHandler {
     if (!error.isOperational) {
       throw error;
     }
-    next();
+    next(error);
   }
 }
