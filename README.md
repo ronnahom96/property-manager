@@ -25,8 +25,7 @@ Cache Mechanism - For simplicity i used in memory cache solution to store the ba
         Then in the "buildQueryFromFilters" function i would pass over all the filters and append the logic to the query.
 2. Integration testing.
 3. Validations: DateTo Filter can't come before fromDate filter.
-4. Using cache mechanism to store properties balance
-    We can use external tool like Redis or in memory solution.
+4. Using external tool like Redis to store property balance.
 5. Using traces to track request path.
 
 
@@ -59,21 +58,16 @@ cd property-manager
 
 ```
 
-run docker-compose to run locally mongo db instance.
-
-```bash
-
-docker-compose up -d
-
-```
-
 create .env file in config directory with the local db connection url
 
 ```bash
 
-DB_CONNECTION_URL="mongodb+srv://ronh:102030@cluster0.ufp673v.mongodb.net/?retryWrites=true&w=majority"
+DB_CONNECTION_URL="<your-db-connection-url>"
 
 ```
+
+Note: You can use docker-compose to upload your mongodb local instance, using the command: docker-compose up -d and put "mongodb://localhost:27017" in DB_CONNECTION_URL variable.
+
 
 Install dependencies
 
