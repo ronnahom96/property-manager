@@ -1,13 +1,17 @@
 import httpStatus from 'http-status-codes';
 import { FilterQuery, Model } from "mongoose";
-import { inject, injectable } from "tsyringe";
+import { inject, singleton } from "tsyringe";
 import { AppError } from "../../common/appError";
 import { EXPENSE, INCOME, NOT_FOUND, SERVICES } from "../../common/constants";
 import { IRecord, IRecordDTO, RecordFilterParams } from "../interfaces";
 
-@injectable()
+@singleton()
 export class RecordService {
-    constructor(@inject(SERVICES.RECORD_MODEL) private recordModel: Model<IRecord>) { }
+    private readonly propertyBalance: Map<string, number>;
+
+    constructor(@inject(SERVICES.RECORD_MODEL) private recordModel: Model<IRecord>) {
+        this.propertyBalance = new Map<string, number>();
+    }
 
     async searchRecords(propertyId: string, filters: RecordFilterParams): Promise<IRecord[]> {
         const query: FilterQuery<RecordFilterParams> = this.recordModel.find({ propertyId });
@@ -21,16 +25,25 @@ export class RecordService {
         const lastRecord = await this.fetchLastRecordByProperty(recordInput.propertyId);
         const balance = this.calcBalance(lastRecord, new Date(recordInput.date), recordInput.amount);
         const record = new this.recordModel({ balance, ...recordInput });
+        this.propertyBalance.set(record.propertyId, record.balance);
         return await record.save();
     }
 
     async getPropertyBalance(propertyId: string): Promise<number> {
-        const lastRecord = await this.fetchLastRecordByProperty(propertyId);
-        if (!lastRecord) {
-            throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
+        let balance = this.propertyBalance.get(propertyId);
+        if (!balance) {
+            const lastRecord = await this.fetchLastRecordByProperty(propertyId);
+            if (!lastRecord) {
+                throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
+            }
+
+            this.propertyBalance.set(lastRecord.propertyId, lastRecord.balance);
+            balance = lastRecord.balance;
+        } else {
+            console.log("cache hit");
         }
 
-        return lastRecord.balance;
+        return balance;
     }
 
     async getMonthlyReport(propertyId: string, year: number, month: number): Promise<string[]> {

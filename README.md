@@ -16,6 +16,7 @@ Pino - Pino is extremely fast and has a low overhead, good for our high traffic 
 
 Mongoose - Easy to use, i knew that it can be suitable for the requirements.
 Tsyringe - For Dependency Injection
+Cache Mechanism - For simplicity i used in memory cache solution to store the balance per property.
 
 ## TODO
 1. Make the search more generic.
