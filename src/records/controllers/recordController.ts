@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
+import { Logger } from 'pino';
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../common/appError';
-import { INVALID_DATE } from '../../common/constants';
+import { INVALID_DATE, SERVICES } from '../../common/constants';
 import {
   IRecord, IRecordDTO, MonthlyReportQueryParams, MonthlyReportResponse,
   PropertyBalanceResponse, RecordFilterParams, RecordPathParams
@@ -16,11 +17,14 @@ type GetMonthlyReportHandler = RequestHandler<RecordPathParams, MonthlyReportRes
 
 @injectable()
 export class RecordController {
-  public constructor(@inject(RecordService) private readonly recordService: RecordService) { }
+  public constructor(@inject(RecordService) private readonly recordService: RecordService,
+    @inject(SERVICES.LOGGER) private readonly logger: Logger) { }
 
   public searchRecords: SearchRecordsHandler = async (req, res, next) => {
     const propertyId = req.params.propertyId;
     const filters: RecordFilterParams = req.query;
+
+    this.logger.info("start searchRecords", { propertyId, filters });
 
     try {
       if ((filters.toDate && !this.checkIsValidDate(filters.toDate)) ||
@@ -37,6 +41,7 @@ export class RecordController {
 
   public createRecord: CreateRecordHandler = async (req, res, next) => {
     const recordInput: IRecordDTO = req.body
+    this.logger.info("start createRecord", { recordInput });
 
     try {
       if (!this.checkIsValidDate(recordInput.date)) {
@@ -52,6 +57,8 @@ export class RecordController {
 
   public getPropertyBalance: GetPropertyBalanceHandler = async (req, res, next) => {
     const propertyId = req.params.propertyId;
+    this.logger.info("start getPropertyBalance", { propertyId });
+
     try {
       const balance = await this.recordService.getPropertyBalance(propertyId);
       return res.status(httpStatus.OK).json({ propertyId, balance });;
@@ -63,6 +70,7 @@ export class RecordController {
   public getMonthlyReport: GetMonthlyReportHandler = async (req, res, next) => {
     const propertyId: string = req.params.propertyId;
     const { year, month } = req.query;
+    this.logger.info("start getMonthlyReport", { propertyId, year, month });
 
     try {
       const report: string[] = await this.recordService.getMonthlyReport(propertyId, year, month);
