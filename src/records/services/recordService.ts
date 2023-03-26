@@ -8,9 +8,11 @@ import { IRecord, IRecordDTO, RecordFilterParams } from "../interfaces";
 @singleton()
 export class RecordService {
     private readonly propertyBalance: Map<string, number>;
+    private readonly monthlyReports: Map<string, string[]>;
 
     constructor(@inject(SERVICES.RECORD_MODEL) private recordModel: Model<IRecord>) {
         this.propertyBalance = new Map<string, number>();
+        this.monthlyReports = new Map<string, string[]>();
     }
 
     async searchRecords(propertyId: string, filters: RecordFilterParams): Promise<IRecord[]> {
@@ -21,32 +23,30 @@ export class RecordService {
         return records;
     }
 
-    async createRecord(recordInput: IRecordDTO): Promise<IRecord> {
-        const lastRecord = await this.fetchLastRecordByProperty(recordInput.propertyId);
-        const balance = this.calcBalance(lastRecord, new Date(recordInput.date), recordInput.amount);
-        const record = new this.recordModel({ balance, ...recordInput });
+    async createRecord(recordInput: IRecordDTO, previousBalance: number): Promise<IRecord> {
+        const record = new this.recordModel({ balance: previousBalance + recordInput.amount, ...recordInput });
         this.propertyBalance.set(record.propertyId, record.balance);
         return await record.save();
     }
 
     async getPropertyBalance(propertyId: string): Promise<number> {
-        let balance = this.propertyBalance.get(propertyId);
-        if (!balance) {
-            const lastRecord = await this.fetchLastRecordByProperty(propertyId);
-            if (!lastRecord) {
-                throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
-            }
+        let cacheBalance = this.propertyBalance.get(propertyId);
+        if (cacheBalance) return cacheBalance;
 
-            this.propertyBalance.set(lastRecord.propertyId, lastRecord.balance);
-            balance = lastRecord.balance;
-        } else {
-            console.log("cache hit");
+        const lastRecord = await this.fetchLastRecordByProperty(propertyId);
+        if (!lastRecord) {
+            throw new AppError(NOT_FOUND, httpStatus.NOT_FOUND, true);
         }
 
-        return balance;
+        this.propertyBalance.set(lastRecord.propertyId, lastRecord.balance);
+        return lastRecord.balance;
     }
 
     async getMonthlyReport(propertyId: string, year: number, month: number): Promise<string[]> {
+        const reportMapKey = `${propertyId}_${month}_${year}`;
+        const cacheReport = this.monthlyReports.get(reportMapKey);
+        if (cacheReport) return cacheReport;
+
         const filterQuery = {
             propertyId,
             "$expr": {
@@ -63,20 +63,11 @@ export class RecordService {
 
         const startingBalance = records[0].balance - records[0].amount;
         const report = this.buildReport(records, startingBalance);
+        this.monthlyReports.set(reportMapKey, report);
         return report;
     }
 
-    private calcBalance(lastRecord: IRecord | null, date: Date, amount: number) {
-        let balance = amount;
-
-        if (lastRecord && lastRecord.date.getTime() < date.getTime()) {
-            balance += lastRecord ? lastRecord.balance : 0;
-        }
-
-        return balance;
-    }
-
-    private async fetchLastRecordByProperty(propertyId: string): Promise<IRecord | null> {
+    public async fetchLastRecordByProperty(propertyId: string): Promise<IRecord | null> {
         const record: IRecord | null = await this.recordModel.findOne({ propertyId }).sort({ date: -1 }).exec();
         return record;
     }
