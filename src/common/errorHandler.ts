@@ -10,11 +10,11 @@ export class ErrorHandler {
 
   public handleError(error: AppError, request: Request, response: Response, next: NextFunction) {
     this.logger.error({ message: error.message, stack: error.stack });
-    response.status(error.statusCode);
 
     if (!error.isOperational) {
       throw error;
     }
-    next(error);
+
+    response.status(error.statusCode).send(error.message);
   }
 }
